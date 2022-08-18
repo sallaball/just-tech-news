@@ -1,6 +1,6 @@
 const router = require('express').Router();
 // const { json } = require('sequelize/types');
-const { User, Post } = require('../../models');
+const { User, Post, Vote } = require('../../models');
 
 //get /api/users
 router.get('/', (req, res) => {
@@ -26,6 +26,12 @@ router.get('/:id', (req, res) => {
           {
             model: Post,
             attributes: ['id', 'title', 'post_url', 'created_at']
+          },
+          {
+            model: Post,
+            attributes: ['title'],
+            through: Vote,
+            as: 'voted_posts'
           }
         ]
     })
