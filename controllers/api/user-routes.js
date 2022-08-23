@@ -1,8 +1,7 @@
 const router = require('express').Router();
-// const { json } = require('sequelize/types');
 const { User, Post, Comment, Vote } = require('../../models');
 
-//get /api/users
+// get all users
 router.get('/', (req, res) => {
     //access our User model and run .findAll() method
     User.findAll({
@@ -64,12 +63,15 @@ router.post('/', (req, res) => {
       email: req.body.email,
       password: req.body.password
     })
-      .then(dbUserData => res.json(dbUserData))
+      .then(dbUserData => {
+        res.json(dbUserData);
+      })
       .catch(err => {
         console.log(err);
         res.status(500).json(err);
       });
   });
+
 router.post('/login', (req, res) => {
     //expects {username: 'lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
     User.findOne({
@@ -84,13 +86,13 @@ router.post('/login', (req, res) => {
     
         // Verify user
         const validPassword = dbUserData.checkPassword(req.body.password);
+
         if (!validPassword) {
             res.status(400).json({ message: 'Incorrect password!' });
             return;
         }
+
         res.json({ user: dbUserData, message: 'You are now logged in!' });
-    
-  
     });
 });
 
@@ -106,7 +108,7 @@ router.put('/:id', (req, res) => {
         }
     })
     .then(dbUserData => {
-        if (!dbUserData[0]) {
+        if (!dbUserData) {
             res.status(404).json({ message: 'No user found with this id' });
             return;
         }
